@@ -1,0 +1,228 @@
+---
+// A reusable, animated chat thread — Telegram-ish. Moko on the left (with a
+// typing indicator before each line), you on the right. Plays once on scroll
+// with realistic timing; degrades to the full static conversation with no JS
+// or under prefers-reduced-motion. Used for the curiosity + check-in demos.
+interface Message {
+  from: "moko" | "you";
+  text: string;
+}
+interface Props {
+  messages: readonly Message[];
+  badge?: string; // e.g. "Moko reached out · just now" — signals Moko spoke first
+  chip?: string; // optional trailing "saved to memory" line
+}
+const { messages, badge, chip } = Astro.props;
+---
+
+<div class="chat-demo">
+  {badge && <div class="cd-badge">🌸 {badge}</div>}
+
+  <div class="cd-thread">
+    {
+      messages.map((m) => (
+        <div class={`cd-row ${m.from}`}>
+          {m.from === "moko" && (
+            <div class="cd-avatar" aria-hidden="true">🌸</div>
+          )}
+          <div class="cd-col">
+            {m.from === "moko" && (
+              <div class="cd-typing" aria-hidden="true">
+                <span /><span /><span />
+              </div>
+            )}
+            <div class="cd-bubble">{m.text}</div>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+
+  {chip && <div class="cd-chip">{chip}</div>}
+
+  <div class="cd-foot">
+    <button class="cd-replay" type="button" aria-label="Replay the conversation">↺ replay</button>
+  </div>
+</div>
+
+<style>
+  .chat-demo {
+    max-width: 540px;
+    margin: 0 auto;
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    padding: 22px 22px 14px;
+  }
+
+  .cd-badge {
+    display: inline-block;
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: 0.78rem;
+    color: var(--moko-pink-deep);
+    background: var(--moko-pink-mist);
+    border-radius: var(--radius-pill);
+    padding: 5px 14px;
+    margin-bottom: 14px;
+  }
+
+  .cd-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .cd-row.you { flex-direction: row-reverse; }
+
+  .cd-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #fff 0%, var(--moko-pink-soft) 45%, var(--moko-pink) 100%);
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px -5px var(--moko-pink-dim);
+  }
+
+  .cd-col { display: flex; flex-direction: column; max-width: 78%; }
+  .cd-row.you .cd-col { align-items: flex-end; }
+
+  .cd-bubble {
+    padding: 11px 16px;
+    border-radius: 18px;
+    line-height: 1.45;
+    font-size: 0.98rem;
+  }
+  .cd-row.moko .cd-bubble {
+    background: var(--lavender-soft);
+    color: var(--ink);
+    border-bottom-left-radius: 6px;
+  }
+  .cd-row.you .cd-bubble {
+    background: var(--moko-pink);
+    color: #fff;
+    border-bottom-right-radius: 6px;
+  }
+
+  /* typing indicator — hidden unless JS shows it */
+  .cd-typing {
+    display: none;
+    width: fit-content;
+    gap: 4px;
+    padding: 12px 14px;
+    background: var(--lavender-soft);
+    border-radius: 18px 18px 18px 6px;
+    margin-bottom: 2px;
+  }
+  .cd-typing.show { display: inline-flex; }
+  .cd-typing span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--lavender);
+    animation: cd-dot 1s infinite ease-in-out;
+  }
+  .cd-typing span:nth-child(2) { animation-delay: 0.15s; }
+  .cd-typing span:nth-child(3) { animation-delay: 0.3s; }
+
+  .cd-chip {
+    margin: 16px 2px 4px;
+    background: #e6f6e4;
+    color: #2c4a2a;
+    font-size: 0.86rem;
+    font-weight: 600;
+    padding: 9px 14px;
+    border-radius: 14px;
+  }
+
+  .cd-foot { text-align: center; margin-top: 12px; }
+  .cd-replay {
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: var(--moko-pink-deep);
+    background: transparent;
+    border: 1.5px solid var(--moko-pink-soft);
+    border-radius: var(--radius-pill);
+    padding: 3px 14px;
+    cursor: pointer;
+  }
+  .cd-replay:hover { background: var(--moko-pink-mist); }
+
+  /* When JS is driving, hide bubbles/chip until revealed. (Default = visible,
+     so no-JS and reduced-motion show the whole conversation.) */
+  .chat-demo.js .cd-bubble:not(.show),
+  .chat-demo.js .cd-chip:not(.show) { opacity: 0; transform: translateY(8px); }
+  .cd-bubble.show, .cd-chip.show { animation: cd-in 0.4s ease forwards; }
+
+  @keyframes cd-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes cd-dot { 0%, 60%, 100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-4px); opacity: 1; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cd-bubble, .cd-chip { opacity: 1 !important; transform: none !important; animation: none !important; }
+  }
+</style>
+
+<script>
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+  document.querySelectorAll<HTMLElement>(".chat-demo").forEach((root) => {
+    if (reduce) return; // leave the full conversation shown, no motion
+    root.classList.add("js");
+
+    const rows = [...root.querySelectorAll<HTMLElement>(".cd-row")];
+    const chip = root.querySelector<HTMLElement>(".cd-chip");
+    let token = 0;
+
+    async function play() {
+      const me = ++token;
+      rows.forEach((r) => {
+        r.querySelector(".cd-bubble")?.classList.remove("show");
+        r.querySelector(".cd-typing")?.classList.remove("show");
+      });
+      chip?.classList.remove("show");
+      await sleep(300);
+
+      for (const r of rows) {
+        if (me !== token) return;
+        const bubble = r.querySelector<HTMLElement>(".cd-bubble");
+        const typing = r.querySelector<HTMLElement>(".cd-typing");
+        const len = bubble?.textContent?.trim().length ?? 20;
+        if (typing) {
+          typing.classList.add("show");
+          await sleep(Math.min(1600, 550 + len * 16));
+          if (me !== token) return;
+          typing.classList.remove("show");
+          await sleep(120);
+        } else {
+          await sleep(560);
+        }
+        if (me !== token) return;
+        bubble?.classList.add("show");
+        await sleep(380);
+      }
+      if (chip && me === token) {
+        await sleep(280);
+        chip.classList.add("show");
+      }
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            play();
+            io.disconnect();
+          }
+        }
+      },
+      { threshold: 0.4 },
+    );
+    io.observe(root);
+    root.querySelector(".cd-replay")?.addEventListener("click", play);
+  });
+</script>

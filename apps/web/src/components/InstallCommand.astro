@@ -1,0 +1,89 @@
+---
+// One-line installers, per platform. The copy button copies the raw command
+// only (never the shell prompt). Host is mokomoko.ai — keep it in sync with
+// astro.config.mjs; the scripts are served from apps/web/public/ via Pages.
+const platforms = [
+  { id: "macos", label: "macOS", prompt: "$", cmd: "curl -fsSL https://mokomoko.ai/install.sh | sh" },
+  { id: "linux", label: "Linux", prompt: "$", cmd: "curl -fsSL https://mokomoko.ai/install.sh | sh" },
+  { id: "windows", label: "Windows", prompt: ">", cmd: "irm https://mokomoko.ai/install.ps1 | iex" },
+];
+---
+
+<div class="install" id="install">
+  <h2>Bring Moko home 🌸</h2>
+  <p class="sub">Copy, paste into your terminal, press enter. That's it.</p>
+
+  <div class="tabs" role="tablist" aria-label="Choose your platform">
+    {platforms.map((p, i) => (
+      <button
+        class="tab"
+        role="tab"
+        id={`tab-${p.id}`}
+        aria-controls={`panel-${p.id}`}
+        aria-selected={i === 0 ? "true" : "false"}
+      >
+        {p.label}
+      </button>
+    ))}
+  </div>
+
+  {platforms.map((p, i) => (
+    <div
+      class="panel"
+      role="tabpanel"
+      id={`panel-${p.id}`}
+      aria-labelledby={`tab-${p.id}`}
+      hidden={i !== 0}
+    >
+      <div class="cmd">
+        <code><span class="prompt">{p.prompt}&nbsp;</span>{p.cmd}</code>
+        <button class="copy" type="button" data-cmd={p.cmd}>Copy</button>
+      </div>
+    </div>
+  ))}
+
+  <p class="note">No setup required — Moko installs everything it needs (even Python) and runs entirely on your machine.</p>
+</div>
+
+<script>
+  const widget = document.getElementById("install");
+  if (widget) {
+    const tabs = [...widget.querySelectorAll<HTMLButtonElement>(".tab")];
+    const panels = [...widget.querySelectorAll<HTMLElement>(".panel")];
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener("click", () => {
+        tabs.forEach((t) => t.setAttribute("aria-selected", "false"));
+        panels.forEach((p) => (p.hidden = true));
+        tab.setAttribute("aria-selected", "true");
+        panels[i].hidden = false;
+      });
+    });
+
+    widget.querySelectorAll<HTMLButtonElement>(".copy").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const cmd = btn.dataset.cmd ?? "";
+        try {
+          await navigator.clipboard.writeText(cmd);
+        } catch {
+          // Fallback for non-secure contexts / older browsers.
+          const ta = document.createElement("textarea");
+          ta.value = cmd;
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          ta.remove();
+        }
+        const original = btn.textContent;
+        btn.textContent = "Copied!";
+        btn.classList.add("copied");
+        setTimeout(() => {
+          btn.textContent = original;
+          btn.classList.remove("copied");
+        }, 1600);
+      });
+    });
+  }
+</script>

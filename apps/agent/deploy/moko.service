@@ -1,0 +1,36 @@
+# Moko — always-on companion, as a systemd --user service.
+#
+# The easy way (writes this unit with the right paths, enables it, and turns on
+# linger so it survives logout/reboot):
+#
+#   moko service install     # then: status | logs | start | stop | restart | uninstall
+#
+# This file is a hand-install reference; `moko service install` generates the
+# real unit at ~/.config/systemd/user/moko.service. Manual route:
+#   cp deploy/moko.service ~/.config/systemd/user/moko.service
+#   # adjust WorkingDirectory / ExecStart below if needed
+#   systemctl --user daemon-reload && systemctl --user enable --now moko
+#   loginctl enable-linger "$USER"     # so it runs without an active login
+#
+# Watch it:   journalctl --user -u moko -f   (or: moko service logs)
+# Stop it:    systemctl --user stop moko      (or: moko service stop)
+
+[Unit]
+Description=Moko — your fluffy companion (always-on)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/dev/moko/apps/agent
+# Use an absolute path to uv if it isn't on the service PATH (`which uv`).
+ExecStart=uv run moko start
+Restart=on-failure
+RestartSec=5
+# Moko shuts down gracefully on SIGTERM well under this; the cap just bounds a
+# rare hung shutdown to seconds instead of systemd's 90s default before SIGKILL.
+TimeoutStopSec=10
+KillMode=mixed
+
+[Install]
+WantedBy=default.target

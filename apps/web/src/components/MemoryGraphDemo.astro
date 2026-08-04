@@ -1,0 +1,227 @@
+---
+// "Watch Moko learn" — a single sentence becomes structured, sourced memory.
+// One offhand message, and the graph assembles itself: nodes pop in, edges
+// draw, each fact stamped with where it came from. Pure SVG + CSS; a tiny
+// IntersectionObserver plays it once on scroll. Honors prefers-reduced-motion
+// (the final state is shown statically).
+---
+
+<div class="mg-card" id="mg">
+  <div class="mg-chat">
+    <div class="mg-bubble">
+      Had dinner with my sister <b>Maya</b> and her husband <b>Tom</b> in
+      <b>Wellington</b> 🍝
+    </div>
+  </div>
+
+  <div class="mg-stage">
+    <svg viewBox="0 0 640 360" role="img"
+      aria-label="Moko turning a message into a graph: you, your sister Maya, her husband Tom, and Wellington, linked and sourced.">
+      <!-- edges (drawn first, sit behind the nodes) -->
+      <g class="mg-edges" fill="none" stroke="var(--moko-pink)" stroke-width="2.5" stroke-linecap="round">
+        <line class="edge e1" x1="130" y1="190" x2="410" y2="90"  pathLength="1"></line>
+        <line class="edge e2" x1="410" y1="90"  x2="520" y2="205" pathLength="1"></line>
+        <line class="edge e3" x1="130" y1="190" x2="300" y2="310" pathLength="1"></line>
+      </g>
+
+      <!-- edge labels -->
+      <g class="mg-elabels">
+        <text class="elabel l1" x="262" y="132">sister</text>
+        <text class="elabel l2" x="478" y="138">husband</text>
+        <text class="elabel l3" x="205" y="258">dinner</text>
+      </g>
+
+      <!-- nodes -->
+      <g class="node you">
+        <rect x="88"  y="166" width="84"  height="48" rx="16"></rect>
+        <text class="t" x="130" y="195">You</text>
+      </g>
+      <g class="node maya">
+        <rect x="336" y="66"  width="148" height="50" rx="16"></rect>
+        <text class="t" x="410" y="88">Maya</text>
+        <text class="s" x="410" y="104">your sister</text>
+      </g>
+      <g class="node tom">
+        <rect x="436" y="180" width="168" height="50" rx="16"></rect>
+        <text class="t" x="520" y="202">Tom</text>
+        <text class="s" x="520" y="218">Maya’s husband</text>
+      </g>
+      <g class="node welly">
+        <rect x="215" y="286" width="170" height="50" rx="16"></rect>
+        <text class="t" x="300" y="308">Wellington</text>
+        <text class="s" x="300" y="324">a place</text>
+      </g>
+    </svg>
+  </div>
+
+  <p class="mg-caption">
+    <span class="mg-stamp">just now · from your message</span>
+    Every fact stamped with <b>when</b> Moko learned it and <b>where</b> it came
+    from.
+    <button class="mg-replay" type="button" aria-label="Replay the animation">↺ replay</button>
+  </p>
+</div>
+
+<style>
+  .mg-card {
+    max-width: 760px;
+    margin: 0 auto;
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    padding: 26px 26px 18px;
+  }
+
+  /* The source message */
+  .mg-chat { display: flex; justify-content: flex-end; margin-bottom: 6px; }
+  .mg-bubble {
+    max-width: 80%;
+    background: var(--moko-pink);
+    color: #fff;
+    padding: 12px 18px;
+    border-radius: 20px 20px 6px 20px;
+    font-size: 1rem;
+    line-height: 1.5;
+    box-shadow: 0 8px 20px -10px var(--moko-pink-dim);
+  }
+  .mg-bubble b { font-weight: 700; }
+
+  .mg-stage svg { width: 100%; height: auto; display: block; overflow: visible; }
+
+  /* Nodes — soft pink pills */
+  .node rect {
+    fill: var(--moko-pink-mist);
+    stroke: var(--moko-pink-soft);
+    stroke-width: 2;
+  }
+  .node .t {
+    fill: var(--moko-pink-deep);
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 17px;
+    text-anchor: middle;
+  }
+  .node .s {
+    fill: var(--ink-soft);
+    font-family: var(--font-body);
+    font-size: 12px;
+    text-anchor: middle;
+  }
+  .node.you .t { font-size: 18px; }
+  .node.you rect { fill: #fff; stroke: var(--moko-pink); }
+
+  .elabel {
+    fill: var(--moko-pink-deep);
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-anchor: middle;
+    /* a white halo so labels stay legible over the edges */
+    paint-order: stroke;
+    stroke: var(--card);
+    stroke-width: 4px;
+  }
+
+  .mg-caption {
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+    margin: 14px 0 2px;
+  }
+  .mg-stamp {
+    display: inline-block;
+    background: var(--moko-pink-mist);
+    color: var(--moko-pink-deep);
+    font-weight: 600;
+    font-size: 0.78rem;
+    padding: 3px 12px;
+    border-radius: var(--radius-pill);
+    margin-right: 8px;
+  }
+  .mg-replay {
+    margin-left: 8px;
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: var(--moko-pink-deep);
+    background: transparent;
+    border: 1.5px solid var(--moko-pink-soft);
+    border-radius: var(--radius-pill);
+    padding: 3px 12px;
+    cursor: pointer;
+  }
+  .mg-replay:hover { background: var(--moko-pink-mist); }
+
+  /* ---- Animation: hidden until .play, then staggered reveal ---- */
+  .mg-bubble,
+  .node,
+  .elabel { opacity: 0; }
+  .edge { stroke-dasharray: 1; stroke-dashoffset: 1; }
+
+  .mg-card.play .mg-bubble { animation: mg-pop 0.5s ease forwards; }
+  .mg-card.play .node      { animation: mg-pop 0.5s ease forwards; transform-box: fill-box; transform-origin: center; }
+  .mg-card.play .elabel    { animation: mg-fade 0.4s ease forwards; }
+  .mg-card.play .edge      { animation: mg-draw 0.6s ease forwards; }
+
+  /* stagger — the order the sentence is understood */
+  .mg-card.play .you   { animation-delay: 0.0s; }
+  .mg-card.play .e1    { animation-delay: 0.4s; }
+  .mg-card.play .l1    { animation-delay: 0.7s; }
+  .mg-card.play .maya  { animation-delay: 0.7s; }
+  .mg-card.play .e2    { animation-delay: 1.2s; }
+  .mg-card.play .l2    { animation-delay: 1.5s; }
+  .mg-card.play .tom   { animation-delay: 1.5s; }
+  .mg-card.play .e3    { animation-delay: 2.0s; }
+  .mg-card.play .l3    { animation-delay: 2.3s; }
+  .mg-card.play .welly { animation-delay: 2.3s; }
+  .mg-card.play .mg-stamp { animation: mg-fade 0.5s ease 2.9s forwards; }
+
+  /* the stamp chip starts hidden too */
+  .mg-stamp { opacity: 0; }
+
+  @keyframes mg-pop {
+    0%   { opacity: 0; transform: scale(0.7); }
+    70%  { opacity: 1; transform: scale(1.06); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  @keyframes mg-fade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes mg-draw { to { stroke-dashoffset: 0; } }
+
+  /* Reduced motion / no-JS: show the finished memory, no movement. */
+  @media (prefers-reduced-motion: reduce) {
+    .mg-bubble, .node, .elabel, .mg-stamp { opacity: 1 !important; animation: none !important; }
+    .edge { stroke-dashoffset: 0 !important; animation: none !important; }
+  }
+</style>
+
+<script>
+  const card = document.getElementById("mg");
+  if (card) {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const play = () => {
+      card.classList.remove("play");
+      // force reflow so re-adding the class restarts the animations
+      void (card as HTMLElement).offsetWidth;
+      card.classList.add("play");
+    };
+    if (reduce) {
+      card.classList.add("play"); // CSS shows the final state statically
+    } else {
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              play();
+              io.disconnect();
+            }
+          }
+        },
+        { threshold: 0.4 },
+      );
+      io.observe(card);
+    }
+    card.querySelector(".mg-replay")?.addEventListener("click", play);
+  }
+</script>

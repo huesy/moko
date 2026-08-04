@@ -1,0 +1,82 @@
+/* Moko skin for Starlight — warm, soft, pink. Mirrors apps/web global.css so
+   the docs feel like the same creature as the landing page, in light or dark. */
+
+@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap");
+
+:root {
+  --sl-font: "Nunito", ui-rounded, "Segoe UI", system-ui, -apple-system, sans-serif;
+  --sl-font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Accent — Moko pink (#ff6fae) across both themes. */
+  --sl-color-accent-low: #5a2540;
+  --sl-color-accent: #ff6fae;
+  --sl-color-accent-high: #ffd6e8;
+}
+
+/* ---- Dark theme (Starlight's default) — warm plum, never cold slate ------- */
+:root,
+:root[data-theme="dark"] {
+  --sl-color-bg: #221820;
+  --sl-color-bg-nav: #2c2230;
+  --sl-color-bg-sidebar: #271d26;
+  --sl-color-bg-inline-code: #34273200;
+  --sl-color-hairline-shade: #3a2c38;
+  --sl-color-text-accent: #ff8fc1;
+}
+
+/* ---- Light theme — the airy garden palette from the landing page ---------- */
+:root[data-theme="light"] {
+  --sl-color-accent-low: #ffe1ee;
+  --sl-color-accent: #ff6fae;
+  --sl-color-accent-high: #8a2d5c;
+
+  /* Starlight inverts these in light mode: "white" = strongest text,
+     "black" = page background. The grays run dark (1) to light (6). */
+  --sl-color-white: #4a3b44;
+  --sl-color-gray-1: #574651;
+  --sl-color-gray-2: #6f5c66;
+  --sl-color-gray-3: #8a7a82;
+  --sl-color-gray-4: #b6a6ae;
+  --sl-color-gray-5: #e7d8e0;
+  --sl-color-gray-6: #f5ebf1;
+  --sl-color-gray-7: #fbf4f8;
+  --sl-color-black: #fffaf6;
+
+  --sl-color-bg: #fffaf6;
+  --sl-color-bg-nav: #fff0f6;
+  --sl-color-bg-sidebar: #fff6fa;
+  --sl-color-text-accent: #b8407a;
+  --sl-color-hairline-shade: #f3dbe8;
+}
+
+/* ---- Rounded brand face on headings + the site title ---------------------- */
+.sl-markdown-content h1,
+.sl-markdown-content h2,
+.sl-markdown-content h3,
+.sl-markdown-content h4,
+h1#_top,
+.site-title {
+  font-family: "Baloo 2", var(--sl-font);
+  letter-spacing: -0.005em;
+}
+
+.site-title { font-weight: 700; }
+
+/* Soft, pillowy corners to match the landing aesthetic. (`pre` is handled below
+   with Expressive Code so it doesn't clobber the frame's header/code corners.) */
+.sl-markdown-content :is(.starlight-aside, table, img) {
+  border-radius: 14px;
+}
+
+/* Round Expressive Code frames to match the skin. Starlight's EC theme sets
+   --ec-brdRad to 0 (sharp) on `.expressive-code[data-theme=…]`, which beats a
+   plain `:root`, so we override that knob with !important. EC then rounds the
+   header's top and the code's bottom itself, with a flat seam between them — and
+   a header-less block rounds all four corners. */
+.expressive-code {
+  --ec-brdRad: 14px !important;
+}
+
+.sl-markdown-content a {
+  text-underline-offset: 0.15em;
+}

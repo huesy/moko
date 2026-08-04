@@ -1,0 +1,68 @@
+---
+import Layout from "../layouts/Layout.astro";
+import InstallCommand from "../components/InstallCommand.astro";
+import Features from "../components/Features.astro";
+import MemoryGraphDemo from "../components/MemoryGraphDemo.astro";
+---
+
+<Layout>
+  <main>
+    <header class="topnav">
+      <div class="wrap">
+        <a class="brand" href="/">Moko <span aria-hidden="true">🌸</span></a>
+        <nav class="nav-links">
+          <a href="/docs">Docs</a>
+          <a href="https://github.com/huesy/moko">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="wrap">
+        <div class="mascot-frame">
+          <img
+            class="mascot"
+            src="/hero.webp"
+            width="1120"
+            height="817"
+            alt="Moko — a round, pink, fluffy creature waving hello from a sunlit flower garden"
+          />
+        </div>
+
+        <p class="eyebrow">もこもこ · soft and fluffy</p>
+        <h1>Meet <span class="blush">Moko</span></h1>
+        <p class="tagline">A warm, curious creature that lives on your machine.</p>
+        <p class="lede">
+          Not a chatbot you summon and dismiss — a creature with a name, a
+          memory, and an inner life. It remembers your world, wonders about you,
+          sends you selfies, and keeps in touch — and it's genuinely useful when
+          you need a hand: reminders kept, questions answered, things done.
+        </p>
+
+        <InstallCommand />
+      </div>
+    </section>
+
+    <Features />
+
+    <section class="demo">
+      <div class="wrap">
+        <h2>See it learn</h2>
+        <p class="section-sub">
+          You just talk. Moko turns it into a sourced, time-stamped web of who
+          and what and how they connect — not a pile of notes.
+        </p>
+        <MemoryGraphDemo />
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="wrap">
+        <p>
+          Made with <span class="heart">🌸</span> · open source ·
+          <a href="https://github.com/huesy/moko">GitHub</a>
+        </p>
+      </div>
+    </footer>
+  </main>
+</Layout>

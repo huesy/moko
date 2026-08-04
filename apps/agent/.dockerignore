@@ -1,0 +1,10 @@
+# Keep the build context lean and reproducible.
+**/__pycache__/
+**/*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+tests/
+htmlcov/
+*.egg-info/
+.git/

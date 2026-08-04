@@ -1,0 +1,13 @@
+# JS/TS workspace. apps/agent is Python (no package.json) and is ignored here.
+packages:
+  - "apps/*"
+  - "packages/*"
+
+# Dependencies allowed to run install/build scripts (pnpm blocks them by
+# default). esbuild = Astro's bundler; sharp = image optimization.
+allowBuilds:
+  esbuild: true
+  sharp: true
+onlyBuiltDependencies:
+  - esbuild
+  - sharp

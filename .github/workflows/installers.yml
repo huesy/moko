@@ -1,0 +1,76 @@
+name: installers
+
+# Smoke-test the one-line installers on real macOS, Linux, and Windows runners.
+#
+# Each job runs the actual install.sh / install.ps1 — but points it at the
+# checked-out copy of the repo (MOKO_REPO=file://… , MOKO_REF=<this commit>),
+# so the test exercises exactly the code under review with no auth and no
+# network flakiness on the clone.
+#
+# It validates the whole chain: uv bootstrap, version handling, the uv-tool
+# build of apps/agent, the `moko` entry point, and that `moko` actually runs.
+# Not covered (URL-only differences): fetching the script over HTTPS from
+# mokomoko.ai, and an anonymous github.com clone of a release.
+
+on:
+  push:
+    paths:
+      - "install.sh"
+      - "install.ps1"
+      - "apps/agent/pyproject.toml"
+      - ".github/workflows/installers.yml"
+  pull_request:
+    paths:
+      - "install.sh"
+      - "install.ps1"
+      - "apps/agent/pyproject.toml"
+      - ".github/workflows/installers.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  posix:
+    name: install · ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Run install.sh and verify moko works
+        env:
+          MOKO_REPO: "file://${{ github.workspace }}"
+          MOKO_REF: ${{ github.sha }}
+          UV_TOOL_BIN_DIR: ${{ runner.temp }}/moko-bin
+        run: |
+          set -eux
+          mkdir -p "$UV_TOOL_BIN_DIR"
+          sh ./install.sh
+          export PATH="$UV_TOOL_BIN_DIR:$PATH"
+          moko --version
+          moko --help
+
+  windows:
+    name: install · windows-latest
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Run install.ps1 and verify moko works
+        shell: pwsh
+        env:
+          MOKO_REF: ${{ github.sha }}
+          UV_TOOL_BIN_DIR: ${{ runner.temp }}\moko-bin
+        run: |
+          Set-ExecutionPolicy -Scope Process Bypass -Force
+          # file:/// URL from the checkout path (Windows uses backslashes).
+          $env:MOKO_REPO = "file:///" + ($env:GITHUB_WORKSPACE -replace '\\', '/')
+          New-Item -ItemType Directory -Force -Path $env:UV_TOOL_BIN_DIR | Out-Null
+          & ./install.ps1
+          $env:Path = "$env:UV_TOOL_BIN_DIR;$env:Path"
+          moko --version
+          moko --help

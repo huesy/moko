@@ -1,0 +1,112 @@
+---
+// "While you slept" — a dream-journal entry. Shows Moko has a life when you're
+// not looking: overnight it consolidates the day (reconciles duplicate people,
+// tidies facts, lets old worries soften) and leaves an auditable note of what
+// it did and what it now wonders about. Static card; a gentle shimmer on the moon.
+---
+
+<div class="dj">
+  <div class="dj-head">
+    <span class="dj-moon" aria-hidden="true">🌙</span>
+    <span class="dj-title">Dream journal</span>
+    <span class="dj-date">last night · 03:12</span>
+  </div>
+
+  <p class="dj-intro">While you slept, I tidied my mind:</p>
+  <ul class="dj-list">
+    <li>Merged the two “Maya”s into one — your sister is finally a single person to me.</li>
+    <li>Filed 14 new things from today into the graph, each with where it came from.</li>
+    <li>Let an old worry about your move soften. You seem settled now.</li>
+  </ul>
+
+  <div class="dj-wonder">
+    <span class="dj-flower" aria-hidden="true">🌷</span>
+    <p>Now I'm wondering whether you've heard back about the apartment. I'll ask if it comes up.</p>
+  </div>
+
+  <p class="dj-foot">My inner life is private by default — but it's always yours to look in on.</p>
+</div>
+
+<style>
+  .dj {
+    max-width: 600px;
+    margin: 0 auto;
+    background:
+      linear-gradient(180deg, var(--lavender-soft) 0%, var(--card) 22%);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    padding: 24px 28px 22px;
+    border-top: 3px solid var(--lavender);
+    text-align: left;
+  }
+
+  .dj-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .dj-moon {
+    font-size: 1.4rem;
+    animation: dj-glow 4s ease-in-out infinite;
+  }
+  .dj-title {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--ink);
+  }
+  .dj-date {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+  }
+
+  .dj-intro { margin: 0 0 10px; font-weight: 600; color: var(--ink); }
+
+  .dj-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 18px;
+  }
+  .dj-list li {
+    position: relative;
+    padding-left: 26px;
+    margin-bottom: 10px;
+    color: var(--ink);
+    font-size: 0.96rem;
+    line-height: 1.5;
+  }
+  .dj-list li::before {
+    content: "✦";
+    position: absolute;
+    left: 4px;
+    top: 0;
+    color: var(--moko-pink);
+  }
+
+  .dj-wonder {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    background: var(--moko-pink-mist);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+  }
+  .dj-wonder p { margin: 0; font-style: italic; color: var(--ink); font-size: 0.96rem; }
+  .dj-flower { font-size: 1.1rem; line-height: 1.4; }
+
+  .dj-foot {
+    margin: 16px 0 0;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+  }
+
+  @keyframes dj-glow {
+    0%, 100% { filter: drop-shadow(0 0 0 transparent); transform: rotate(0deg); }
+    50% { filter: drop-shadow(0 0 8px var(--sun)); transform: rotate(-8deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .dj-moon { animation: none; }
+  }
+</style>

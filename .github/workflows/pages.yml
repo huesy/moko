@@ -1,0 +1,62 @@
+name: pages
+
+# Build the Astro site (apps/web — the marketing landing at / plus the Starlight docs
+# under /docs) and deploy it to GitHub Pages at the custom domain mokomoko.ai.
+#
+# One-time repo setup (Settings → Pages): set Source to "GitHub Actions", then set the
+# custom domain to mokomoko.ai and tick "Enforce HTTPS" once DNS has propagated. The
+# domain itself is pinned by apps/web/public/CNAME (copied into the deployed artifact), so
+# it survives every redeploy.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/web/**"
+      - "install.sh"
+      - "install.ps1"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch: # deploy on demand from the Actions tab
+
+# Least privilege: read the repo, mint the Pages deploy token, publish to Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One live deploy at a time; don't cancel an in-flight publish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build the site (landing + docs)
+        run: pnpm --filter @moko/web build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/web/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

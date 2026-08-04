@@ -1,0 +1,58 @@
+name: ci
+
+# Lint + test on every pull request and every push to main. The agent
+# (Python/uv) and the JS workspaces (pnpm) have separate toolchains, so each
+# gets its own job — a PR touching either side is checked.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# One run per ref; a newer push cancels an in-flight one.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  agent:
+    name: agent · ruff + pytest
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/agent
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v7
+
+      - name: Sync (with dev tools)
+        run: uv sync --extra dev
+
+      - name: Ruff
+        run: uv run ruff check .
+
+      - name: Pytest
+        run: uv run pytest -q
+
+  web:
+    name: web + monitor · build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build the site (landing + docs)
+        run: pnpm --filter @moko/web build
+
+      - name: Type-check + build the monitor
+        run: pnpm --filter @moko/monitor build

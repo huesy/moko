@@ -1,0 +1,50 @@
+# Build / packaging
+build/
+dist/
+*.egg-info/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+.python-version
+
+# uv
+.uv/
+
+# Test / lint caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# JS / web (Node, pnpm, Astro)
+node_modules/
+.astro/
+.turbo/
+*.tsbuildinfo
+
+# Built monitor dashboard — a build artifact, not source. CI (release.yml) builds
+# it into the release wheel; for local dev run scripts/build-monitor.sh.
+apps/agent/src/moko/monitor/static/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# Project state (Moko's runtime + mind live under ~/.moko/, never in-tree)
+.moko/
+*.db
+*.db-shm
+*.db-wal
+
+# Local secrets
+.env
+.env.*
+!.env.example
+
+# The mascot is intentionally tracked; nothing else binary

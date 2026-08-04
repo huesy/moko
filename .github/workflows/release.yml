@@ -1,0 +1,47 @@
+name: release
+
+# Cut a release by pushing a version tag:  git tag v0.1.0 && git push origin v0.1.0
+# CI has Node, so it builds the monitor dashboard, bakes it into the wheel, and
+# attaches the wheel to a GitHub Release. Installers then fetch that prebuilt wheel
+# (UI included, no Node on the user's machine) — so the built UI is NEVER committed
+# to git; see SANDBOX.md / scripts/build-monitor.sh.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write # create the release + attach the wheel asset
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # full history + tags, so hatch-vcs can derive the version
+
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Build the monitor UI and vendor it into the package
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm --filter @moko/monitor build
+          rm -rf apps/agent/src/moko/monitor/static
+          cp -r apps/monitor/dist apps/agent/src/moko/monitor/static
+
+      - uses: astral-sh/setup-uv@v7
+
+      - name: Build the wheel (dashboard included via pyproject artifacts)
+        working-directory: apps/agent
+        run: uv build --wheel --out-dir ../../dist
+
+      - name: Attach the wheel to the release
+        uses: softprops/action-gh-release@v3
+        with:
+          files: dist/*.whl
+          generate_release_notes: true

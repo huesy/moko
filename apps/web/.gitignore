@@ -1,0 +1,5 @@
+# Installers served at the site root, copied from the repo-root canonical
+# copies on every dev/build (see astro.config.mjs → installers()). The root
+# install.sh / install.ps1 are the single source of truth; these are generated.
+public/install.sh
+public/install.ps1

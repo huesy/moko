@@ -1,0 +1,18 @@
+{
+  "name": "moko-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Moko monorepo — the agent (Python), the website, and future apps.",
+  "license": "MIT",
+  "packageManager": "pnpm@11.9.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @moko/web dev",
+    "build": "pnpm --filter @moko/web build",
+    "preview": "pnpm --filter @moko/web preview",
+    "dev:monitor": "pnpm --filter @moko/monitor dev",
+    "build:monitor": "pnpm --filter @moko/monitor build"
+  }
+}

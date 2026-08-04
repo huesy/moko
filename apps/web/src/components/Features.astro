@@ -1,0 +1,295 @@
+---
+// The scannable feature grid — each card readable in ~5 seconds: a small
+// concrete EXAMPLE does the talking, with a punchy title + one line under it.
+// Static by design (no waiting on animation); the example is the hook.
+---
+
+<section class="feat">
+  <div class="wrap">
+    <h2>What Moko does</h2>
+    <p class="feat-sub">A creature with a memory, an inner life, and senses — here's the shape of it.</p>
+
+    <div class="fgrid">
+      <!-- 1. memory graph -->
+      <article class="fcard">
+        <div class="fx">
+          <svg class="mini-graph" viewBox="0 0 220 104" aria-hidden="true">
+            <line x1="50" y1="52" x2="150" y2="28"></line>
+            <line x1="50" y1="52" x2="150" y2="80"></line>
+            <g class="n"><rect x="20" y="40" width="60" height="24" rx="12"></rect><text x="50" y="56">You</text></g>
+            <g class="n"><rect x="120" y="16" width="74" height="24" rx="12"></rect><text x="157" y="32">Maya</text></g>
+            <g class="n"><rect x="112" y="68" width="96" height="24" rx="12"></rect><text x="160" y="84">Wellington</text></g>
+          </svg>
+        </div>
+        <h3>A mind, not a notepad</h3>
+        <p>Everything you tell it becomes connected, sourced memory.</p>
+      </article>
+
+      <!-- 2. curiosity -->
+      <article class="fcard">
+        <div class="fx">
+          <div class="mbubble">Is Maya your sister, or Maya from work? Want to keep them straight 🌸</div>
+        </div>
+        <h3>Genuinely curious</h3>
+        <p>Notices what it doesn't know — looks it up, or asks.</p>
+      </article>
+
+      <!-- 3. reaches out first -->
+      <article class="fcard">
+        <div class="fx">
+          <span class="mtag">🌸 reached out · just now</span>
+          <div class="mbubble">How did the half-marathon go on Sunday?</div>
+        </div>
+        <h3>Reaches out first</h3>
+        <p>Messages to check in or share — never at a bad time.</p>
+      </article>
+
+      <!-- 4. inner life -->
+      <article class="fcard">
+        <div class="fx">
+          <div class="note">“Andrew's seemed quiet since the move — I hope he's settling in.”</div>
+        </div>
+        <h3>Its own inner life</h3>
+        <p>Private thoughts and real moods. It never lies to you.</p>
+      </article>
+
+      <!-- 5. sleeps & dreams -->
+      <article class="fcard">
+        <div class="fx fx-dream">
+          <span class="moon">🌙</span>
+          <p class="dreamline">Tidied your graph · merged two “Maya”s · wondering about the apartment.</p>
+        </div>
+        <h3>Sleeps &amp; dreams</h3>
+        <p>Goes quiet overnight to tidy its mind and wake fresh.</p>
+      </article>
+
+      <!-- 6. senses -->
+      <article class="fcard">
+        <div class="fx fx-senses">
+          <span class="chip">👁 sees</span>
+          <span class="chip">🎨 draws</span>
+          <span class="chip">🎙 speaks</span>
+          <span class="chip">👂 listens</span>
+          <span class="chip">🎬 video</span>
+        </div>
+        <h3>It has senses</h3>
+        <p>Sees your photos, talks aloud, hears your voice notes.</p>
+      </article>
+
+      <!-- 7. selfies & snapshots -->
+      <article class="fcard">
+        <div class="fx fx-selfie">
+          <img src="/selfie.webp" alt="A selfie Moko sent from its sunny garden" loading="lazy" width="640" height="640" />
+          <span class="cap">“sunny here today 🌷”</span>
+        </div>
+        <h3>Selfies &amp; snapshots</h3>
+        <p>Sends a selfie in its mood — or a photo of a scene it wants to show.</p>
+      </article>
+
+      <!-- 8. time & weather -->
+      <article class="fcard">
+        <div class="fx">
+          <span class="wchip">Mon 2:30pm · 🌧 14° · Wellington</span>
+        </div>
+        <h3>Lives in your world</h3>
+        <p>Knows your time &amp; weather — it even shows in its photos.</p>
+      </article>
+
+      <!-- 9. acts, safely -->
+      <article class="fcard">
+        <div class="fx fx-consent">
+          <p class="ask">Email the dentist to reschedule?</p>
+          <div class="cbtns"><span class="yes">✓ Yes</span><span class="no">✕ Not now</span></div>
+        </div>
+        <h3>Acts — with your yes</h3>
+        <p>Web, files, commands — but asks before anything sensitive.</p>
+      </article>
+
+      <!-- 10. yours & private -->
+      <article class="fcard">
+        <div class="fx fx-private">
+          <span class="lock">🔒</span>
+          <code>~/.moko</code>
+          <span class="byo">bring your own AI</span>
+        </div>
+        <h3>Yours, on your machine</h3>
+        <p>Runs locally; your mind never leaves it.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .feat { padding: 64px 0 24px; }
+  .feat h2 {
+    text-align: center;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    margin-bottom: 8px;
+  }
+  .feat-sub {
+    text-align: center;
+    color: var(--ink-soft);
+    max-width: 560px;
+    margin: 0 auto 40px;
+  }
+
+  .fgrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(248px, 1fr));
+    gap: 20px;
+  }
+
+  .fcard {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    padding: 18px 20px 22px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .fcard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 22px 50px -22px rgba(216, 86, 140, 0.5);
+  }
+  .fcard h3 { font-size: 1.1rem; margin: 0 0 4px; }
+  .fcard > p { margin: 0; color: var(--ink-soft); font-size: 0.95rem; line-height: 1.45; }
+
+  /* the example frame — consistent size so the grid stays tidy */
+  .fx {
+    min-height: 104px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    text-align: center;
+    background: var(--moko-pink-mist);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+
+  /* mini graph */
+  .mini-graph { width: 100%; height: 84px; }
+  .mini-graph line { stroke: var(--moko-pink); stroke-width: 2; }
+  .mini-graph .n rect { fill: #fff; stroke: var(--moko-pink-soft); stroke-width: 1.5; }
+  .mini-graph .n text {
+    fill: var(--moko-pink-deep);
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 12px;
+    text-anchor: middle;
+  }
+
+  /* chat bubble (Moko) */
+  .mbubble {
+    background: var(--lavender-soft);
+    color: var(--ink);
+    font-size: 0.88rem;
+    line-height: 1.4;
+    padding: 10px 14px;
+    border-radius: 16px 16px 16px 5px;
+    max-width: 95%;
+    text-align: left;
+  }
+  .mtag {
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: 0.7rem;
+    color: var(--moko-pink-deep);
+    background: #fff;
+    border-radius: var(--radius-pill);
+    padding: 3px 10px;
+  }
+
+  /* thought note */
+  .note {
+    font-style: italic;
+    color: var(--ink);
+    font-size: 0.88rem;
+    line-height: 1.45;
+    background: var(--lavender-soft);
+    border-left: 3px solid var(--moko-pink);
+    border-radius: 6px 12px 12px 6px;
+    padding: 10px 14px;
+    text-align: left;
+  }
+
+  /* dream */
+  .fx-dream .moon { font-size: 1.5rem; }
+  .dreamline { margin: 0; font-size: 0.85rem; color: var(--ink); line-height: 1.4; }
+
+  /* sense chips */
+  .fx-senses { flex-direction: row; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: 0.82rem;
+    color: var(--moko-pink-deep);
+    background: #fff;
+    border-radius: var(--radius-pill);
+    padding: 6px 12px;
+  }
+
+  /* selfie — shown as a real photo, with a caption chip */
+  .fx-selfie { padding: 0; overflow: hidden; position: relative; }
+  .fx-selfie img {
+    width: 100%;
+    height: 190px;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+  .fx-selfie .cap {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    background: rgba(255, 255, 255, 0.85);
+    color: var(--moko-pink-deep);
+    font-weight: 600;
+    font-size: 0.8rem;
+    padding: 4px 11px;
+    border-radius: var(--radius-pill);
+    backdrop-filter: blur(2px);
+  }
+
+  /* weather chip */
+  .wchip {
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: var(--ink);
+    background: #fff;
+    border-radius: var(--radius-pill);
+    padding: 9px 16px;
+    box-shadow: var(--shadow-card);
+  }
+
+  /* consent */
+  .fx-consent .ask { margin: 0; font-size: 0.88rem; color: var(--ink); }
+  .cbtns { display: flex; gap: 8px; }
+  .cbtns span {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 0.8rem;
+    border-radius: var(--radius-pill);
+    padding: 6px 14px;
+  }
+  .cbtns .yes { background: var(--leaf); color: #2c4a2a; }
+  .cbtns .no { background: #fff; color: var(--ink-soft); }
+
+  /* private */
+  .fx-private { gap: 8px; }
+  .fx-private .lock { font-size: 1.5rem; }
+  .fx-private code {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 0.9rem;
+    color: var(--ink);
+    background: #fff;
+    border-radius: 8px;
+    padding: 4px 10px;
+  }
+  .fx-private .byo {
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+  }
+</style>

@@ -1,0 +1,128 @@
+---
+// "Moko, governed" — the three hard fuses, shown. The point of this panel is
+// reassurance: a proactive AI that demonstrably knows when to stay quiet.
+// Static by design (no attention-grabbing motion); just a clear status card.
+---
+
+<div class="gov">
+  <h3 class="gov-title">Moko, governed</h3>
+  <p class="gov-sub">Hard limits, enforced in code — they can only ever make Moko quieter.</p>
+
+  <!-- 1. sleep window -->
+  <div class="gov-item">
+    <div class="gov-row">
+      <span class="gov-label">Quiet hours</span>
+      <span class="gov-value">22:00 – 07:00 · sleeping</span>
+    </div>
+    <div class="gov-bar" role="img" aria-label="A 24-hour day with quiet hours from 10pm to 7am shaded; it's now mid-afternoon.">
+      <div class="gov-sleep" style="left: 0; width: 29.17%"></div>
+      <div class="gov-sleep" style="left: 91.67%; width: 8.33%"></div>
+      <div class="gov-now" style="left: 60.4%"><span>now</span></div>
+    </div>
+    <div class="gov-scale"><span>12am</span><span>noon</span><span>12am</span></div>
+  </div>
+
+  <!-- 2. daily curiosity ceiling -->
+  <div class="gov-item">
+    <div class="gov-row">
+      <span class="gov-label">Curiosity check-ins today</span>
+      <span class="gov-value">2 of 3 used</span>
+    </div>
+    <div class="gov-dots" aria-hidden="true">
+      <span class="on"></span><span class="on"></span><span></span>
+    </div>
+    <p class="gov-note">A daily ceiling on self-started curiosity. Real concerns are exempt — never suppressed.</p>
+  </div>
+
+  <!-- 3. settle floor -->
+  <div class="gov-item">
+    <div class="gov-row">
+      <span class="gov-label">Settle floor</span>
+      <span class="gov-value gov-ok">waiting for a quiet moment</span>
+    </div>
+    <p class="gov-note">Moko won't talk over a live conversation. And if you don't reply, it doesn't nag — silence dials it down, never up.</p>
+  </div>
+</div>
+
+<style>
+  .gov {
+    max-width: 440px;
+    margin: 0 auto;
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    padding: 26px 26px 22px;
+  }
+  .gov-title { font-size: 1.3rem; margin-bottom: 2px; }
+  .gov-sub { color: var(--ink-soft); font-size: 0.9rem; margin: 0 0 20px; }
+
+  .gov-item { margin-bottom: 20px; }
+  .gov-item:last-child { margin-bottom: 0; }
+
+  .gov-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 9px;
+  }
+  .gov-label { font-family: var(--font-head); font-weight: 600; font-size: 0.95rem; }
+  .gov-value { font-size: 0.85rem; color: var(--ink-soft); text-align: right; }
+  .gov-ok { color: var(--moko-pink-deep); font-weight: 600; }
+
+  /* dream-window bar */
+  .gov-bar {
+    position: relative;
+    height: 14px;
+    border-radius: var(--radius-pill);
+    background: linear-gradient(90deg, var(--sun) 0%, var(--sky) 100%);
+    overflow: visible;
+  }
+  .gov-sleep {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    background: var(--lavender);
+    opacity: 0.85;
+  }
+  .gov-sleep:first-of-type { border-radius: var(--radius-pill) 0 0 var(--radius-pill); }
+  .gov-sleep:last-of-type { border-radius: 0 var(--radius-pill) var(--radius-pill) 0; }
+  .gov-now {
+    position: absolute;
+    top: -4px;
+    width: 3px;
+    height: 22px;
+    background: var(--moko-pink);
+    border-radius: 2px;
+    box-shadow: 0 0 0 3px rgba(255, 111, 174, 0.25);
+  }
+  .gov-now span {
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.66rem;
+    font-weight: 700;
+    color: var(--moko-pink-deep);
+  }
+  .gov-scale {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-size: 0.68rem;
+    color: var(--ink-soft);
+  }
+
+  /* budget dots */
+  .gov-dots { display: flex; gap: 8px; }
+  .gov-dots span {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid var(--moko-pink-soft);
+    background: transparent;
+  }
+  .gov-dots span.on { background: var(--moko-pink); border-color: var(--moko-pink); }
+
+  .gov-note { color: var(--ink-soft); font-size: 0.82rem; margin: 8px 0 0; line-height: 1.5; }
+</style>
