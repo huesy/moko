@@ -46,6 +46,13 @@ export default defineConfig({
         "Moko — a persistent, local-first personal AI with a memory graph, an inner life, and genuine curiosity. Documentation.",
       tagline: 'A warm, curious creature that lives on your machine.',
       customCss: ['./src/styles/docs.css'],
+      // GTM: Head injects the bootstrap script first; SkipLink wraps the
+      // noscript iframe so it sits right after <body> (SkipLink is Starlight's
+      // first body child). Both are MPA full-page loads — no SPA history hooks.
+      components: {
+        Head: './src/components/starlight/Head.astro',
+        SkipLink: './src/components/starlight/SkipLink.astro',
+      },
       social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/huesy/moko' }],
       editLink: { baseUrl: 'https://github.com/huesy/moko/edit/main/apps/web/' },
       sidebar: [

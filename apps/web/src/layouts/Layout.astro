@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { GTM_ID, gtmHeadScript } from "../lib/gtm";
 
 interface Props {
   title?: string;
@@ -18,6 +19,9 @@ const ogImage = Astro.site ? new URL("/hero.webp", Astro.site).href : "/hero.web
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Google Tag Manager -->
+    <script is:inline set:html={gtmHeadScript} />
+    <!-- End Google Tag Manager -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/webp" href="/hero.webp" />
@@ -43,6 +47,15 @@ const ogImage = Astro.site ? new URL("/hero.webp", Astro.site).href : "/hero.web
     />
   </head>
   <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+      <iframe
+        src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <slot />
   </body>
 </html>

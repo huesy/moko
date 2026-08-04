@@ -1,0 +1,19 @@
+---
+/**
+ * Starlight puts SkipLink first inside <body>. We wrap it so GTM's noscript
+ * lands immediately after the opening <body> tag (before the skip link).
+ */
+import Default from "@astrojs/starlight/components/SkipLink.astro";
+import { GTM_ID } from "../../lib/gtm";
+---
+
+<!-- Google Tag Manager (noscript) -->
+<noscript>
+  <iframe
+    src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+    height="0"
+    width="0"
+    style="display:none;visibility:hidden"></iframe>
+</noscript>
+<!-- End Google Tag Manager (noscript) -->
+<Default><slot /></Default>

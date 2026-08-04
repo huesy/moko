@@ -1,0 +1,13 @@
+---
+/**
+ * Starlight Head override: inject GTM as the first thing in <head>.
+ * Default Head still emits the rest of the configured head entries.
+ */
+import Default from "@astrojs/starlight/components/Head.astro";
+import { gtmHeadScript } from "../../lib/gtm";
+---
+
+<!-- Google Tag Manager -->
+<script is:inline set:html={gtmHeadScript} />
+<!-- End Google Tag Manager -->
+<Default><slot /></Default>
