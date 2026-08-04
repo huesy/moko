@@ -121,7 +121,34 @@ async def _ping() -> bool:
     return True
 
 
+def _ping_sync() -> bool:
+    """Same check as `_ping`, without asyncio — used when a loop is already running
+    (e.g. `moko chat` → `_refuse_if_daemon_live` inside `asyncio.run`)."""
+    import socket
+
+    path = control_socket_path()
+    if not path.exists():
+        return False
+    sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    try:
+        sock.settimeout(1.0)
+        sock.connect(str(path))
+        return True
+    except OSError:
+        return False
+    finally:
+        with contextlib.suppress(OSError):
+            sock.close()
+
+
 def is_daemon_live() -> bool:
     """Whether the background daemon is running and holding the DB — used to refuse
-    operations (like a restore) that can't be done safely while it's open."""
-    return asyncio.run(_ping())
+    operations (like a restore) that can't be done safely while it's open.
+
+    Safe both outside an event loop (`asyncio.run`) and *inside* one (sync socket
+    connect — `asyncio.run` cannot nest). Nested case is what `moko chat` hits."""
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        return asyncio.run(_ping())
+    return _ping_sync()

@@ -153,3 +153,42 @@ def test_container_refusal_helper():
                    sleep_end="07:00", proactivity="moderate")
         c.runtime = RuntimeConfig(mode=mode)
         assert _common.refuse_if_container_daemon_down(c) is True
+
+
+# ---- is_daemon_live: must not nest asyncio.run (the moko chat crash) --------
+
+
+def test_is_daemon_live_false_without_socket(tmp_path, monkeypatch):
+    monkeypatch.setenv("MOKO_HOME", str(tmp_path))
+    ensure_home()
+    assert _daemon.is_daemon_live() is False
+
+
+async def test_is_daemon_live_works_inside_running_loop():
+    """The bug: chat calls is_daemon_live() under asyncio.run(_amain) and
+    nested asyncio.run(_ping) raised RuntimeError. Must return cleanly."""
+    async def handler(reader, writer):
+        await reader.read(1)  # hold until client closes
+        writer.close()
+
+    server = await _serve(handler)
+    try:
+        # Called *from* a running loop — this is what moko chat does.
+        assert _daemon.is_daemon_live() is True
+    finally:
+        server.close()
+        await server.wait_closed()
+        with contextlib.suppress(FileNotFoundError):
+            control_socket_path().unlink()
+
+
+async def test_is_daemon_live_false_for_stale_socket_inside_loop():
+    ensure_home()
+    path = control_socket_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("")  # file exists but nothing listens
+    try:
+        assert _daemon.is_daemon_live() is False
+    finally:
+        with contextlib.suppress(FileNotFoundError):
+            path.unlink()
