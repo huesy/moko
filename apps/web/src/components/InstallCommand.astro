@@ -37,7 +37,12 @@ const platforms = [
     >
       <div class="cmd">
         <code><span class="prompt">{p.prompt}&nbsp;</span>{p.cmd}</code>
-        <button class="copy" type="button" data-cmd={p.cmd}>Copy</button>
+        <button
+          class="copy"
+          type="button"
+          data-cmd={p.cmd}
+          data-platform={p.id}
+        >Copy</button>
       </div>
     </div>
   ))}
@@ -51,6 +56,17 @@ const platforms = [
     const tabs = [...widget.querySelectorAll<HTMLButtonElement>(".tab")];
     const panels = [...widget.querySelectorAll<HTMLElement>(".panel")];
 
+    // GTM / GA4: count install intent when someone copies the one-liner.
+    // Wire a GA4 Event tag in GTM on Custom Event name = moko_install_copy.
+    const trackInstallCopy = (platform: string) => {
+      const w = window as Window & { dataLayer?: Record<string, unknown>[] };
+      w.dataLayer = w.dataLayer || [];
+      w.dataLayer.push({
+        event: "moko_install_copy",
+        install_platform: platform,
+      });
+    };
+
     tabs.forEach((tab, i) => {
       tab.addEventListener("click", () => {
         tabs.forEach((t) => t.setAttribute("aria-selected", "false"));
@@ -63,6 +79,7 @@ const platforms = [
     widget.querySelectorAll<HTMLButtonElement>(".copy").forEach((btn) => {
       btn.addEventListener("click", async () => {
         const cmd = btn.dataset.cmd ?? "";
+        const platform = btn.dataset.platform ?? "unknown";
         try {
           await navigator.clipboard.writeText(cmd);
         } catch {
@@ -76,6 +93,7 @@ const platforms = [
           document.execCommand("copy");
           ta.remove();
         }
+        trackInstallCopy(platform);
         const original = btn.textContent;
         btn.textContent = "Copied!";
         btn.classList.add("copied");
