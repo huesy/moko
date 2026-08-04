@@ -65,6 +65,9 @@ jobs:
         env:
           MOKO_REF: ${{ github.sha }}
           UV_TOOL_BIN_DIR: ${{ runner.temp }}\moko-bin
+          # Windows runners default to a legacy code page; help text has 🌸.
+          PYTHONUTF8: "1"
+          PYTHONIOENCODING: utf-8
         run: |
           Set-ExecutionPolicy -Scope Process Bypass -Force
           # file:/// URL from the checkout path (Windows uses backslashes).

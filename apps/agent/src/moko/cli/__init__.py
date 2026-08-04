@@ -7,11 +7,26 @@ Tiny, friendly surface for now: `moko setup`, `moko status`, and a bare
 from __future__ import annotations
 
 import argparse
+import contextlib
+import sys
 
 from .. import __version__
 
 
+def _ensure_utf8_stdio() -> None:
+    """Windows consoles often default to cp1252, which can't print 🌸 / rich
+    markup escapes cleanly. Prefer UTF-8 with replacement so `moko --help` and
+    the rest of the CLI never crash on encode."""
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if reconfigure is None:
+            continue
+        with contextlib.suppress(Exception):
+            reconfigure(encoding="utf-8", errors="replace")
+
+
 def main(argv: list[str] | None = None) -> int:
+    _ensure_utf8_stdio()
     parser = argparse.ArgumentParser(
         prog="moko",
         description="Moko — your warm, curious, fluffy companion. 🌸",
