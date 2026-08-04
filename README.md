@@ -49,7 +49,7 @@ curl -fsSL https://mokomoko.ai/install.sh | sh
 irm https://mokomoko.ai/install.ps1 | iex
 ```
 
-Then run `moko setup`. Full walkthrough: [docs → Install](https://mokomoko.ai/docs/docs/install/).
+Then run `moko setup`. Full walkthrough: [docs → Install](https://mokomoko.ai/docs/install/).
 
 Pin a release with `MOKO_VERSION=v0.1.0` (or any tag). From a clone or
 source, see [Contributing](CONTRIBUTING.md).
