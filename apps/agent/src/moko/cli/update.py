@@ -84,9 +84,12 @@ def latest_release() -> tuple[str, str] | None:
 
 def is_newer(tag: str, current: str) -> bool:
     """Whether release `tag` (e.g. 'v0.1.0') is newer than the installed `current`."""
-    from packaging.version import InvalidVersion, Version
-
     candidate = tag.lstrip("vV")
+    try:
+        from packaging.version import InvalidVersion, Version
+    except ImportError:
+        # packaging is declared in pyproject; keep a fallback for stripped envs.
+        return candidate != current
     try:
         return Version(candidate) > Version(current)
     except InvalidVersion:
@@ -129,7 +132,12 @@ def _download_wheel(tag: str, wheel_url: str | None) -> str | None:
         try:
             import httpx
 
-            dest = Path(tmp) / "moko.whl"
+            # uv requires a PEP 427 wheel filename (…-py3-none-any.whl), not a bare
+            # "moko.whl" — same footgun as install.sh's HTTPS download path.
+            name = Path(wheel_url.split("?", 1)[0]).name
+            if not name.endswith(".whl"):
+                name = "moko-0-py3-none-any.whl"
+            dest = Path(tmp) / name
             with httpx.stream("GET", wheel_url, timeout=60, follow_redirects=True) as resp:
                 if resp.status_code == 200:
                     with dest.open("wb") as fh:

@@ -98,7 +98,10 @@ if ($Ref -ne 'main') {
       $rel = Invoke-RestMethod "https://api.github.com/repos/$Slug/releases/tags/$Ref" -ErrorAction Stop
       $asset = $rel.assets | Where-Object { $_.name -like '*.whl' } | Select-Object -First 1
       if ($asset) {
-        $dest = Join-Path $tmp 'moko.whl'
+        # uv requires a PEP 427 wheel filename (name-version-…whl), not bare moko.whl
+        $whlName = [System.IO.Path]::GetFileName($asset.browser_download_url)
+        if (-not $whlName -or -not $whlName.EndsWith('.whl')) { $whlName = $asset.name }
+        $dest = Join-Path $tmp $whlName
         Invoke-WebRequest $asset.browser_download_url -OutFile $dest -ErrorAction Stop
         Note "installing the $Ref release wheel (dashboard included)"
         uv tool install --force --python $Python "$dest"

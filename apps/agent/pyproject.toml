@@ -46,6 +46,7 @@ dependencies = [
     "aiohttp>=3.10",
     "piexif>=1.1.3",
     "pillow>=10.0",
+    "packaging>=23",  # moko update version compare
 ]
 
 [project.urls]

@@ -120,11 +120,17 @@ if [ "$MOKO_REF" != "main" ]; then
     fi
   fi
   if [ -z "$installed" ] && have curl; then
+    # uv requires a PEP 427 wheel *filename* (name-version-…whl). Saving as
+    # bare "moko.whl" makes `uv tool install` reject it and fall back to source.
     url=$(curl -fsSL "https://api.github.com/repos/${MOKO_SLUG}/releases/tags/${MOKO_REF}" \
       2>/dev/null | sed -n 's/.*"browser_download_url": *"\([^"]*\.whl\)".*/\1/p' | head -1)
-    if [ -n "$url" ] && curl -fsSL "$url" -o "$tmpw/moko.whl" 2>/dev/null; then
-      note "installing the $MOKO_REF release wheel (dashboard included)"
-      if uv tool install --force --python "$MOKO_PYTHON" "$tmpw/moko.whl"; then installed=1; fi
+    if [ -n "$url" ]; then
+      whl_name=$(basename "$url")
+      case "$whl_name" in *.whl) ;; *) whl_name="moko-0-py3-none-any.whl" ;; esac
+      if curl -fsSL "$url" -o "$tmpw/$whl_name" 2>/dev/null; then
+        note "installing the $MOKO_REF release wheel (dashboard included)"
+        if uv tool install --force --python "$MOKO_PYTHON" "$tmpw/$whl_name"; then installed=1; fi
+      fi
     fi
   fi
   if [ -z "$installed" ]; then
