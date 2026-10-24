@@ -45,7 +45,7 @@ dependencies = [
     "httpx>=0.27",
     "aiohttp>=3.14.3",  # Dependabot: CVE-2026-69244 / 59881 / 69243
     "piexif>=1.1.3",
-    "pillow>=12.3.0",  # Dependabot: multiple image DoS/OOB CVEs
+    "pillow>=13.0.0",  # Dependabot: multiple image DoS/OOB CVEs
     "packaging>=23",  # moko update version compare
 ]
 
